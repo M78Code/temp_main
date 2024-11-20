@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_main/generated/r.dart';
+import 'package:flutter_main/pages/play/widgets/poker_flip_widget.dart';
 import 'package:flutter_main/widgets/gaps.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -98,12 +97,15 @@ class OpenPokerPage extends GetView<OpenPokerController> {
           ),
         ),
         Gaps.h2,
-        // _transformPokerWidget(controller.player1PokerNumber),
-        Image.asset(
-          controller.player1PokerNumber,
-          width: ScreenUtil().setWidth(44),
-          height: ScreenUtil().setHeight(60),
-        ),
+        PokerFlipWidget(
+          controller.isPlayer1Flipped,
+          frontImagePath: controller.player1PokerNumber,
+        )
+        // Image.asset(
+        //   controller.player1PokerNumber,
+        //   width: ScreenUtil().setWidth(44),
+        //   height: ScreenUtil().setHeight(60),
+        // ),
       ],
     );
   }
@@ -122,11 +124,15 @@ class OpenPokerPage extends GetView<OpenPokerController> {
           ),
         ),
         Gaps.h2,
-        Image.asset(
-          controller.player2PokerNumber,
-          width: ScreenUtil().setWidth(44),
-          height: ScreenUtil().setHeight(60),
-        ),
+        PokerFlipWidget(
+          controller.isPlayer2Flipped,
+          frontImagePath: controller.player2PokerNumber,
+        )
+        // Image.asset(
+        //   controller.player2PokerNumber,
+        //   width: ScreenUtil().setWidth(44),
+        //   height: ScreenUtil().setHeight(60),
+        // ),
       ],
     );
   }
@@ -147,11 +153,15 @@ class OpenPokerPage extends GetView<OpenPokerController> {
             ),
           ),
           Gaps.h2,
-          Image.asset(
-            controller.player3PokerNumber,
-            width: ScreenUtil().setWidth(44),
-            height: ScreenUtil().setHeight(60),
-          ),
+          PokerFlipWidget(
+            controller.isPlayer3Flipped,
+            frontImagePath: controller.player3PokerNumber,
+          )
+          // Image.asset(
+          //   controller.player3PokerNumber,
+          //   width: ScreenUtil().setWidth(44),
+          //   height: ScreenUtil().setHeight(60),
+          // ),
         ],
       ),
     );
@@ -171,11 +181,15 @@ class OpenPokerPage extends GetView<OpenPokerController> {
           ),
         ),
         Gaps.h2,
-        Image.asset(
-          controller.banker1PokerNumber,
-          width: ScreenUtil().setWidth(44),
-          height: ScreenUtil().setHeight(60),
-        ),
+        PokerFlipWidget(
+          controller.isBanker1Flipped,
+          frontImagePath: controller.banker1PokerNumber,
+        )
+        // Image.asset(
+        //   controller.banker1PokerNumber,
+        //   width: ScreenUtil().setWidth(44),
+        //   height: ScreenUtil().setHeight(60),
+        // ),
       ],
     );
   }
@@ -194,11 +208,15 @@ class OpenPokerPage extends GetView<OpenPokerController> {
           ),
         ),
         Gaps.h2,
-        Image.asset(
-          controller.banker2PokerNumber,
-          width: ScreenUtil().setWidth(44),
-          height: ScreenUtil().setHeight(60),
-        ),
+        PokerFlipWidget(
+          controller.isBanker2Flipped,
+          frontImagePath: controller.banker2PokerNumber,
+        )
+        // Image.asset(
+        //   controller.banker2PokerNumber,
+        //   width: ScreenUtil().setWidth(44),
+        //   height: ScreenUtil().setHeight(60),
+        // ),
       ],
     );
   }
@@ -218,54 +236,17 @@ class OpenPokerPage extends GetView<OpenPokerController> {
             ),
           ),
           Gaps.h2,
-          Image.asset(
-            controller.banker3PokerNumber,
-            width: ScreenUtil().setWidth(44),
-            height: ScreenUtil().setHeight(60),
-          ),
+          PokerFlipWidget(
+            controller.isBanker3Flipped,
+            frontImagePath: controller.banker3PokerNumber,
+          )
+          // Image.asset(
+          //   controller.banker3PokerNumber,
+          //   width: ScreenUtil().setWidth(44),
+          //   height: ScreenUtil().setHeight(60),
+          // ),
         ],
       ),
-    );
-  }
-
-  Widget _transformPokerWidget(path) {
-    return Stack(
-      children: [
-        AnimatedBuilder(
-          animation: controller.animation,
-          builder: (_, child) {
-            final angle = controller.animation.value * pi; // 动态计算旋转角度
-            final isBackSide = controller.animation.value <= 0.5; // 控制显示哪一面
-            // 翻转效果
-            return Transform(
-              transform: Matrix4.identity()
-                ..setEntry(3, 2, 0.001) // 添加透视效果
-                ..rotateY(angle), //旋转Y轴
-              child: isBackSide ? child : const SizedBox.shrink(),
-            );
-          },
-          child: _buildPokerImage(R.playingCardsPokerBg), //背面显示动画
-        ),
-        AnimatedBuilder(
-          animation: controller.animation,
-          builder: (_, child) {
-            double opacity = (controller.animation.value - 0.5).clamp(0, 1) *
-                2; // 透明度从 0 到 1
-            return Opacity(
-              opacity: opacity,
-              child: _buildPokerImage(path),
-            );
-          },
-        ),
-      ],
-    );
-  }
-
-  Widget _buildPokerImage(path) {
-    return Image.asset(
-      path,
-      width: ScreenUtil().setWidth(44),
-      height: ScreenUtil().setHeight(60),
     );
   }
 }

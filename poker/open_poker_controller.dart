@@ -2,6 +2,7 @@ import 'package:flutter/animation.dart';
 import 'package:flutter_main/generated/r.dart';
 import 'package:flutter_main/models/ws/ws_106_model.dart';
 import 'package:flutter_main/models/ws/ws_171_model.dart';
+import 'package:flutter_main/utils/log_util.dart';
 import 'package:flutter_main/utils/string_util.dart';
 import 'package:get/get.dart';
 
@@ -10,9 +11,6 @@ class OpenPokerController extends GetxController
   static OpenPokerController get controller {
     return Get.find<OpenPokerController>();
   }
-
-  late AnimationController _animationController;
-  late Animation<double> animation;
 
   //黑桃1～10，J，Q，K
   final spades = [
@@ -112,6 +110,9 @@ class OpenPokerController extends GetxController
   var player3PokerNumber = R.playingCardsPokerBg;
   var isShowPlayerRepairPoker = false;
   var playerResult = "0"; //闲牌大小结果
+  var isPlayer1Flipped = false; //闲是否翻第1张牌
+  var isPlayer2Flipped = false; //闲是否翻第2张牌
+  var isPlayer3Flipped = false; //闲是否翻第3张牌
 
   // 庄三张牌
   var banker1PokerNumber = R.playingCardsPokerBg;
@@ -119,23 +120,18 @@ class OpenPokerController extends GetxController
   var banker3PokerNumber = R.playingCardsPokerBg;
   var isShowBankerRepairPoker = false;
   var bankerResult = "0"; //庄牌大小结果
+  var isBanker1Flipped = false; //庄是否翻第1张牌
+  var isBanker2Flipped = false; //庄是否翻第2张牌
+  var isBanker3Flipped = false; //庄是否翻第3张牌
 
-  var isFlipped = false; //是否翻牌
+  final poker1Time = 500;
+  final poker2Time = 700;
+  final poker3Time = 1000;
 
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    _animationController = AnimationController(
-      vsync: this,
-      duration: const Duration(seconds: 1),
-    );
-    animation = Tween<double>(begin: 0, end: 1).animate(
-      CurvedAnimation(
-        parent: _animationController,
-        curve: Curves.easeInOut,
-      ),
-    );
   }
 
   @override
@@ -146,15 +142,7 @@ class OpenPokerController extends GetxController
 
   @override
   void onClose() {
-    _animationController.dispose();
     super.onClose();
-  }
-
-  //翻牌动画
-  void _transformPokerAnimation() {
-    Future.delayed(const Duration(milliseconds: 3000), () {
-      _animationController.forward();
-    });
   }
 
   //开牌信息
@@ -166,17 +154,30 @@ class OpenPokerController extends GetxController
       if (ws106model.cardIndex == 2) {
         banker1PokerNumber =
             pokerNumber(ws106model.cardOwner, ws106model.cardNumber ?? 0);
+        Future.delayed(Duration(milliseconds: poker1Time), () {
+          isBanker1Flipped = true;
+          update(["OpenPokerPage"]);
+        });
       }
       //计算庄的第二张牌信息
       if (ws106model.cardIndex == 4) {
         banker2PokerNumber =
             pokerNumber(ws106model.cardOwner, ws106model.cardNumber ?? 0);
+        Future.delayed(Duration(milliseconds: poker2Time), () {
+          isBanker2Flipped = true;
+          update(["OpenPokerPage"]);
+        });
       }
       //计算庄的第三张牌信息（补牌）
       if (ws106model.cardIndex == 6) {
         isShowBankerRepairPoker = true;
         banker3PokerNumber =
             pokerNumber(ws106model.cardOwner, ws106model.cardNumber ?? 0);
+        Future.delayed(Duration(milliseconds: poker3Time), () {
+          isBanker3Flipped = true;
+          update(["OpenPokerPage"]);
+        });
+        // LogUtil.log("庄的补牌：${ws106model.cardIndex}");
       }
     } else if (ws106model.cardOwner == 1) {
       //闲开牌
@@ -184,17 +185,29 @@ class OpenPokerController extends GetxController
       if (ws106model.cardIndex == 1) {
         player1PokerNumber =
             pokerNumber(ws106model.cardOwner, ws106model.cardNumber ?? 0);
+        Future.delayed(Duration(milliseconds: poker1Time), () {
+          isPlayer1Flipped = true;
+          update(["OpenPokerPage"]);
+        });
       }
       //计算闲的第二张牌信息
       if (ws106model.cardIndex == 3) {
         player2PokerNumber =
             pokerNumber(ws106model.cardOwner, ws106model.cardNumber ?? 0);
+        Future.delayed(Duration(milliseconds: poker2Time), () {
+          isPlayer2Flipped = true;
+          update(["OpenPokerPage"]);
+        });
       }
       //计算闲的第三张牌信息（补牌）
       if (ws106model.cardIndex == 5) {
         isShowPlayerRepairPoker = true;
         player3PokerNumber =
             pokerNumber(ws106model.cardOwner, ws106model.cardNumber ?? 0);
+        Future.delayed(Duration(milliseconds: poker3Time), () {
+          isPlayer3Flipped = true;
+          update(["OpenPokerPage"]);
+        });
       }
     }
     //计算闲，庄开牌大小结果
@@ -203,9 +216,13 @@ class OpenPokerController extends GetxController
       for (int i = 0; i < results.length; i++) {
         var cardResult = results[i];
         if (cardResult.owner == 0) {
-          bankerResult = cardResult.result ?? "0";
+          if (isBanker1Flipped || isBanker2Flipped || isBanker3Flipped) {
+            bankerResult = cardResult.result ?? "0";
+          }
         } else if (cardResult.owner == 1) {
-          playerResult = cardResult.result ?? "0";
+          if (isPlayer1Flipped || isPlayer2Flipped || isPlayer3Flipped) {
+            playerResult = cardResult.result ?? "0";
+          }
         } else {
           playerResult = "0";
           bankerResult = "0";
@@ -226,8 +243,6 @@ class OpenPokerController extends GetxController
   String pokerNumber(int? cardOwner, int cardNumber) {
     var pokerNumber = cardNumber ~/ 4 + 1;
     var pokerFlowerColor = cardNumber % 4;
-    // LogUtil.log(
-    //     "cardOwner=$cardOwner, cardNumber=$cardNumber, pokerNumber=$pokerNumber, pokerFlowerColor=$pokerFlowerColor");
     if (pokerFlowerColor == 0) {
       return clubs[pokerNumber];
     } else if (pokerFlowerColor == 1) {
@@ -251,5 +266,11 @@ class OpenPokerController extends GetxController
     banker2PokerNumber = R.playingCardsPokerBg;
     banker3PokerNumber = R.playingCardsPokerBg;
     isShowBankerRepairPoker = false;
+    isPlayer1Flipped = false;
+    isPlayer2Flipped = false;
+    isPlayer3Flipped = false;
+    isBanker1Flipped = false;
+    isBanker2Flipped = false;
+    isBanker3Flipped = false;
   }
 }
