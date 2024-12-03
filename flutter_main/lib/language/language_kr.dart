@@ -1,0 +1,36 @@
+/// 韩文
+const Map<String, String> language_kr = {
+  /// 公共部分
+  'OK': 'OK_韩文',
+  'Cancel': 'Cancel',
+  'Submit': 'Submit',
+  'Confirm': 'Confirm',
+  'Reminder': 'Reminder',
+
+  ///聊天部分 图片
+  'app_com_biaoqing1': 'kr_app_com_biaoqing1',
+  'app_com_biaoqing2': 'kr_app_com_biaoqing2',
+  'app_com_biaoqing3': 'kr_app_com_biaoqing3',
+  'app_com_biaoqing4': 'kr_app_com_biaoqing4',
+  'app_com_biaoqing5': 'kr_app_com_biaoqing5',
+  'app_com_biaoqing6': 'kr_app_com_biaoqing6',
+  'app_com_biaoqing7': 'kr_app_com_biaoqing7',
+  'app_com_biaoqing8': 'kr_app_com_biaoqing8',
+  'app_com_biaoqing9': 'kr_app_com_biaoqing9',
+  'app_com_biaoqing10': 'kr_app_com_biaoqing10',
+  'app_com_biaoqing11': 'kr_app_com_biaoqing11',
+  'app_com_biaoqing12': 'kr_app_com_biaoqing12',
+  'app_com_biaoqing13': 'kr_app_com_biaoqing13',
+  'app_com_biaoqing14': 'kr_app_com_biaoqing14',
+  'app_com_biaoqing15': 'kr_app_com_biaoqing15',
+  'app_com_biaoqing16': 'kr_app_com_biaoqing16',
+  'app_com_biaoqing17': 'kr_app_com_biaoqing17',
+  'app_com_biaoqing18': 'kr_app_com_biaoqing18',
+  'app_com_biaoqing19': 'kr_app_com_biaoqing19',
+  'app_com_biaoqing20': 'kr_app_com_biaoqing20',
+  'app_com_biaoqing21': 'kr_app_com_biaoqing21',
+  'app_com_biaoqing22': 'kr_app_com_biaoqing22',
+  'app_com_biaoqing23': 'kr_app_com_biaoqing23',
+  'app_com_biaoqing24': 'kr_app_com_biaoqing24',
+  'app_com_biaoqing25': 'kr_app_com_biaoqing25',
+};
